@@ -5,3 +5,37 @@ services:
     restart: "no"
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - wallet-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_secret
+      DB_HOST: postgres
+      DB_PORT: 5432
+      POSTGRES_DB: mydb
+  postgres:
+    image: postgres:17
+    restart: "no"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wallet-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_secret
+      POSTGRES_DB: mydb
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+volumes:
+  postgres_data:
+networks:
+  wallet-network:
+    driver: bridge
