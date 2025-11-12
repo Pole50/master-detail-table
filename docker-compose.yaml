@@ -1,0 +1,7 @@
+services:
+  master-detail-table:
+    image: master-detail-table:latest
+    build: .
+    restart: "no"
+    ports:
+      - "8080:8080"
